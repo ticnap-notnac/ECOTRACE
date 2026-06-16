@@ -7,6 +7,7 @@ from sqlalchemy import desc
 from app.models.scan import ScanResult
 from app.services.gemini_service import GeminiService
 from uuid import UUID
+from app.config import settings
 
 class ScanService:
     @staticmethod
@@ -46,7 +47,7 @@ class ScanService:
             analysis_result=analysis,
             raw_response=json.dumps(analysis),
             processing_time_ms=processing_time,
-            gemini_model="gemini-2.5-flash",
+            gemini_model=settings.GEMINI_MODEL,
             status=status
         )
         db.add(scan_record)
