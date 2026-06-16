@@ -29,6 +29,12 @@ async def _generate_with_fallback(prompt, image_part=None):
         except Exception as e:
             # For other errors, don't necessarily retry, but we can
             last_error = e
+            if "404" in str(e) or "not found" in str(e).lower():
+                try:
+                    available = [m.name for m in genai.list_models()]
+                    raise Exception(f"{str(e)}. Available models for your API Key: {available}")
+                except Exception as ex:
+                    pass
             break
             
     if last_error:
