@@ -11,6 +11,10 @@ class Settings(BaseSettings):
     CORS_ORIGINS: List[str] = ["http://localhost:5173", "http://127.0.0.1:5173"]
     SEED_DATA: bool = False
 
+    @property
+    def gemini_api_keys(self) -> List[str]:
+        return [k.strip() for k in self.GEMINI_API_KEY.split(",") if k.strip()]
+
     class Config:
         env_file = ".env"
 

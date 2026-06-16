@@ -11,8 +11,11 @@ from app.config import settings
 import google.generativeai as genai
 from uuid import UUID
 
-genai.configure(api_key=settings.GEMINI_API_KEY)
-model = genai.GenerativeModel('gemini-2.5-flash')
+def _get_gemini_model():
+    keys = settings.gemini_api_keys
+    key = random.choice(keys) if keys else settings.GEMINI_API_KEY
+    genai.configure(api_key=key)
+    return genai.GenerativeModel(settings.GEMINI_MODEL)
 
 class ScheduleService:
     @staticmethod
@@ -118,6 +121,7 @@ class ScheduleService:
             }}
             """
 
+            model = _get_gemini_model()
             response = await model.generate_content_async(prompt)
             
             text = response.text.strip()

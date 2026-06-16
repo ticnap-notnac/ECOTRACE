@@ -1,13 +1,14 @@
 import google.generativeai as genai
 import json
 import base64
+import random
 from app.config import settings
 
-# Configure Gemini
-genai.configure(api_key=settings.GEMINI_API_KEY)
-# Use a multimodal model, e.g., gemini-2.5-flash which is fast and supports images
-# We will use gemini-2.5-flash as it is the standard vision model currently.
-model = genai.GenerativeModel('gemini-2.5-flash')
+def _get_gemini_model():
+    keys = settings.gemini_api_keys
+    key = random.choice(keys) if keys else settings.GEMINI_API_KEY
+    genai.configure(api_key=key)
+    return genai.GenerativeModel(settings.GEMINI_MODEL)
 
 class GeminiService:
     @staticmethod
@@ -101,6 +102,7 @@ class GeminiService:
             - If not a product/barcode, respond with: {"error": "NOT_A_PRODUCT", "message": "..."}
             """
 
+        model = _get_gemini_model()
         response = await model.generate_content_async([prompt, image_part])
         
         # Clean response string (remove ```json wrappers if Gemini accidentally includes them)
