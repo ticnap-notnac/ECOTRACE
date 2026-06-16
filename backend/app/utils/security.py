@@ -1,3 +1,10 @@
+import bcrypt
+
+if not hasattr(bcrypt, "__about__"):
+    class _About:
+        __version__ = bcrypt.__version__
+    bcrypt.__about__ = _About  # type: ignore
+
 from passlib.context import CryptContext
 from jose import jwt, JWTError
 from datetime import datetime, timedelta
