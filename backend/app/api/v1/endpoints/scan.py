@@ -5,8 +5,22 @@ from app.database import get_db
 from app.dependencies import get_current_user
 from app.services.scan_service import ScanService
 from app.schemas.scan import ScanResultResponse
+import google.generativeai as genai
+from app.config import settings
 
 router = APIRouter()
+
+@router.get("/models")
+async def list_available_models():
+    try:
+        keys = settings.gemini_api_keys
+        if not keys:
+            keys = [settings.GEMINI_API_KEY]
+        genai.configure(api_key=keys[0])
+        models = [m.name for m in genai.list_models()]
+        return {"models": models}
+    except Exception as e:
+        return {"error": str(e)}
 
 @router.post("/analyze", response_model=ScanResultResponse)
 async def analyze_scan(
