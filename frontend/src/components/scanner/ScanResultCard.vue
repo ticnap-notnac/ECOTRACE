@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Recycle, Trash2, Leaf, AlertTriangle, AlertCircle } from 'lucide-vue-next'
+import { Recycle, Trash2, Leaf, AlertCircle } from 'lucide-vue-next'
 
 const props = defineProps<{
   result: any

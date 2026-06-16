@@ -2,7 +2,7 @@
 import { ref, onMounted } from 'vue'
 import Sidebar from '../components/layout/Sidebar.vue'
 import ChallengeCard from '../components/challenges/ChallengeCard.vue'
-import { Trophy, Star, Target } from 'lucide-vue-next'
+import { Star, Target } from 'lucide-vue-next'
 import api from '../services/api'
 import { useWindowSize } from '@vueuse/core'
 
@@ -10,9 +10,9 @@ const { width } = useWindowSize()
 const isMobile = ref(width.value < 768)
 
 const stats = ref<any>(null)
-const available = ref([])
-const active = ref([])
-const completed = ref([])
+const available = ref<any[]>([])
+const active = ref<any[]>([])
+const completed = ref<any[]>([])
 const isLoading = ref(true)
 
 const loadData = async () => {

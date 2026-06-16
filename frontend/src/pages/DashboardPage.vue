@@ -96,7 +96,7 @@ onMounted(() => {
 
           <!-- Bottom Row: Vampires & Challenges -->
           <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <VampireAlert :vampires="dashboardStore.summary.energy_vampires.devices" />
+            <VampireAlert :vampires="(dashboardStore.summary.energy_vampires.devices as any[])" />
             
             <!-- Active Challenges Preview -->
             <div class="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm">

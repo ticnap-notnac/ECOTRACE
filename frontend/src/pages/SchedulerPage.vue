@@ -37,7 +37,7 @@ const fetchSchedule = async () => {
   }
 }
 
-const acceptRec = async (id: str) => {
+const acceptRec = async (id: string) => {
   try {
     await api.post(`/schedule/accept/${id}`)
     const rec = recommendations.value.find(r => r.id === id)
@@ -47,7 +47,7 @@ const acceptRec = async (id: str) => {
   }
 }
 
-const dismissRec = async (id: str) => {
+const dismissRec = async (id: string) => {
   try {
     await api.post(`/schedule/dismiss/${id}`)
     const rec = recommendations.value.find(r => r.id === id)
