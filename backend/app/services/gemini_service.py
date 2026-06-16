@@ -2,13 +2,37 @@ import google.generativeai as genai
 import json
 import base64
 import random
+import logging
 from app.config import settings
+from google.api_core.exceptions import ResourceExhausted
 
-def _get_gemini_model():
+async def _generate_with_fallback(prompt, image_part=None):
     keys = settings.gemini_api_keys
-    key = random.choice(keys) if keys else settings.GEMINI_API_KEY
-    genai.configure(api_key=key)
-    return genai.GenerativeModel(settings.GEMINI_MODEL)
+    if not keys:
+        keys = [settings.GEMINI_API_KEY]
+        
+    random.shuffle(keys)
+    last_error = None
+    
+    for key in keys:
+        try:
+            genai.configure(api_key=key)
+            model = genai.GenerativeModel(settings.GEMINI_MODEL)
+            if image_part:
+                return await model.generate_content_async([prompt, image_part])
+            else:
+                return await model.generate_content_async(prompt)
+        except ResourceExhausted as e:
+            logging.warning("Gemini API key exhausted, trying next key...")
+            last_error = e
+            continue
+        except Exception as e:
+            # For other errors, don't necessarily retry, but we can
+            last_error = e
+            break
+            
+    if last_error:
+        raise last_error
 
 class GeminiService:
     @staticmethod
@@ -102,8 +126,7 @@ class GeminiService:
             - If not a product/barcode, respond with: {"error": "NOT_A_PRODUCT", "message": "..."}
             """
 
-        model = _get_gemini_model()
-        response = await model.generate_content_async([prompt, image_part])
+        response = await _generate_with_fallback(prompt, image_part)
         
         # Clean response string (remove ```json wrappers if Gemini accidentally includes them)
         text = response.text.strip()

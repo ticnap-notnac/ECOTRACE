@@ -11,11 +11,7 @@ from app.config import settings
 import google.generativeai as genai
 from uuid import UUID
 
-def _get_gemini_model():
-    keys = settings.gemini_api_keys
-    key = random.choice(keys) if keys else settings.GEMINI_API_KEY
-    genai.configure(api_key=key)
-    return genai.GenerativeModel(settings.GEMINI_MODEL)
+from app.services.gemini_service import _generate_with_fallback
 
 class ScheduleService:
     @staticmethod
@@ -121,8 +117,7 @@ class ScheduleService:
             }}
             """
 
-            model = _get_gemini_model()
-            response = await model.generate_content_async(prompt)
+            response = await _generate_with_fallback(prompt)
             
             text = response.text.strip()
             if text.startswith("```json"): text = text[7:]
